@@ -18,4 +18,9 @@ d. timer定时器
 
 实现基础
 
-1.思路分析 
+1.思路分析
+  tcp socket 建立多个链接
+2. 定义User结构体
+3.定义map结构
+4.message 通道
+5.user监听go程
