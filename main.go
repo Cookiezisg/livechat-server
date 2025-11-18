@@ -37,7 +37,7 @@ func handler(conn net.Conn) {
 			return
 		}
 		message := string(buf[:n])
-		fmt.Printf("Received message: %s", message)
+		fmt.Printf("Recei ved message: %s", message)
 		fmt.Fprintf(conn, "You said: %s", message)
 	}
 }
