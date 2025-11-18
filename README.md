@@ -24,3 +24,4 @@ d. timer定时器
 3.定义map结构
 4.message 通道
 5.user监听go程
+
