@@ -1,27 +1,74 @@
 # livechat-server
-A Go practice project implementing a simple multi-user network chatroom.
 
-实现功能
+一个用 Go 实现的现代化 TCP 在线聊天室，支持多房间、私聊、聊天记录、话题管理、自动踢出超时用户等特性。整个项目只使用标准库，便于本地练手与学习网络并发编程。
 
-1.上线下线
-2.聊天，其他人，自己可以看到聊天消息
-3.查询当前聊天室用户名字
-4.可以修改自己名字
-5.超时踢出
+## ✨ 功能亮点
 
-技术点分析：
-a. socket tcp编程
-b. map结构存储用户，遍历，删除
-c. go 程，channel
-d. select （超时退出，主动退出）
-d. timer定时器
+- **多房间模型**：任何人都可以通过 `/join <room>` 创建或加入聊天室，房间空置会自动回收。
+- **私聊 & @ 消息**：使用 `/msg <user> <text>` 向任意在线用户发送点对点私信。
+- **聊天记录**：每个房间保留最近 N 条（默认 50）消息，可通过 `/history [n]` 查看。
+- **房间话题**：`/topic` 查看或设置房间主题，便于组织讨论。
+- **状态与自定义昵称**：`/who`、`/who all` 查看在线用户，`/nick <name>` 修改昵称（全局唯一）。
+- **闲置自动踢出**：长时间无操作会收到提示并被断开，防止僵尸连接。
+- **无依赖部署**：仅依赖 Go 标准库，开箱即用。
 
-实现基础
+## 🚀 快速开始
 
-1.思路分析
-  tcp socket 建立多个链接
-2. 定义User结构体
-3.定义map结构
-4.message 通道
-5.user监听go程
+> 先安装 [Go 1.21+](https://go.dev/dl/)。
+
+```bash
+git clone https://github.com/Cookiezisg/livechat-server.git
+cd livechat-server
+go run . --addr :8080 --idle 2m --history 50 --max-bytes 4096
+```
+
+运行后使用任意 TCP 客户端连接，例如：
+
+```bash
+nc 127.0.0.1 8080
+```
+
+或者在多个终端中重复上述命令，就能体验实时多人聊天。
+
+### 可用启动参数
+
+| 参数 | 说明 | 默认值 |
+| --- | --- | --- |
+| `--addr` | 监听地址，如 `:8080` 或 `127.0.0.1:9000` | `:8080` |
+| `--idle` | 闲置踢出时间 | `2m` |
+| `--history` | 每个房间保存的历史条数 | `50` |
+| `--max-bytes` | 单条消息最大字节数 | `4096` |
+
+## 💬 聊天命令速查
+
+```
+/help                 查看命令帮助
+/who [all]            查看房间内或全局在线用户
+/rooms                列出所有房间
+/join <room>          加入或创建房间
+/leave                回到 lobby
+/nick <name>          修改昵称（3~24 个字符，字母/数字/_/-）
+/msg <user> <text>    发送私聊
+/topic [text]         查看或设置房间话题
+/history [n]          查看最近 n 条历史
+/me <action>          发送动作（* user does ...）
+/whoami               查看当前身份与房间
+/ping                 检查延迟
+/quit                 退出聊天室
+```
+
+## 🛠 架构概览
+
+- `main.go`：解析命令行参数并启动服务器。
+- `internal/chat`：核心逻辑，包含 `Server`（房间/用户管理）、`Client`（连接生命周期）、`Room`（成员与历史）等模块。
+- 基于 `bufio.Scanner` 处理文本协议，使用 `sync.RWMutex`、channel 和 goroutine 保证并发安全。
+- **源码注释**：所有核心 Go 文件都配有详细中文注释，方便阅读与继续扩展。
+
+## ✅ 开发与测试
+
+本项目暂无单元测试，但可通过 `go test ./...` 验证编译，并借助多个 `nc` 客户端做手动集成测试。欢迎继续完善自动化测试、Web UI 或更丰富的指令集。
+
+---
+
+尽管只是练手项目，也可以是一个体验完整聊天室功能的好基础。Have fun hacking! 🎧
 
