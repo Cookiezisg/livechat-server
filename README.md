@@ -1,74 +1,153 @@
 # livechat-server
 
-一个用 Go 实现的现代化 TCP 在线聊天室，支持多房间、私聊、聊天记录、话题管理、自动踢出超时用户等特性。整个项目只使用标准库，便于本地练手与学习网络并发编程。 
+![Go](https://img.shields.io/badge/Go-1.21-00ADD8?style=flat-square&logo=go&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-336791?style=flat-square&logo=postgresql&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-7-DC382D?style=flat-square&logo=redis&logoColor=white)
+![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=black)
+![Vite](https://img.shields.io/badge/Vite-5-646CFF?style=flat-square&logo=vite&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
 
-## ✨ 功能亮点
+A full-stack web chat app with Go, WebSocket, PostgreSQL, Redis, and a React/Vite frontend. Includes auth, rooms, DMs, message history, presence, typing indicators, and file uploads.
 
-- **多房间模型**：任何人都可以通过 `/join <room>` 创建或加入聊天室，房间空置会自动回收。
-- **私聊 & @ 消息**：使用 `/msg <user> <text>` 向任意在线用户发送点对点私信。
-- **聊天记录**：每个房间保留最近 N 条（默认 50）消息，可通过 `/history [n]` 查看。
-- **房间话题**：`/topic` 查看或设置房间主题，便于组织讨论。
-- **状态与自定义昵称**：`/who`、`/who all` 查看在线用户，`/nick <name>` 修改昵称（全局唯一）。
-- **闲置自动踢出**：长时间无操作会收到提示并被断开，防止僵尸连接。
-- **无依赖部署**：仅依赖 Go 标准库，开箱即用。
+## Overview
 
-## 🚀 快速开始
+This project is a complete web chat system built for learning and extension. It combines:
 
-> 先安装 [Go 1.21+](https://go.dev/dl/)。
+- A Go HTTP API for auth, rooms, users, history, and uploads
+- A WebSocket gateway for real-time chat events
+- PostgreSQL for persistent data
+- Redis for future scaling (fan-out, presence, queues)
+- A React/Vite client with a clean, responsive UI
+
+## Features
+
+- Real-time updates via WebSocket (rooms, DMs, typing, presence)
+- REST APIs for auth, rooms, users, history, uploads
+- Persistent storage with PostgreSQL
+- Modern frontend with React + Vite + Zustand + React Query
+- Clean modular backend for future extensions
+
+## Tech Stack
+
+- Backend: Go 1.21 + chi + pgx + JWT + WebSocket
+- Database: PostgreSQL
+- Cache/queue: Redis (wired in compose, ready to extend)
+- Frontend: Vite + React + TypeScript + Zustand + React Query
+
+## Architecture
+
+- **REST API** handles registration/login, user search, room CRUD, and history queries.
+- **WebSocket Hub** pushes new messages, typing indicators, and presence updates.
+- **Store layer** isolates all Postgres reads/writes.
+- **Frontend** uses Zustand for state, React Query for data fetches, and a WebSocket client for live updates.
+
+## Data Model (PostgreSQL)
+
+- `users`: account + profile fields
+- `rooms`: public/private chat rooms
+- `room_members`: membership + last read timestamps
+- `messages`: room messages and DMs
+
+## Quick Start
+
+### 1) Start infrastructure
 
 ```bash
-git clone https://github.com/Cookiezisg/livechat-server.git
-cd livechat-server
-go run . --addr :8080 --idle 2m --history 50 --max-bytes 4096
+docker-compose up -d
 ```
 
-运行后使用任意 TCP 客户端连接，例如：
+### 2) Initialize database
 
 ```bash
-nc 127.0.0.1 8080
+psql "postgres://livechat:livechat@localhost:5432/livechat?sslmode=disable" -f db/migrations/001_init.sql
 ```
 
-或者在多个终端中重复上述命令，就能体验实时多人聊天。
+### 3) Start backend
 
-### 可用启动参数
-
-| 参数 | 说明 | 默认值 |
-| --- | --- | --- |
-| `--addr` | 监听地址，如 `:8080` 或 `127.0.0.1:9000` | `:8080` |
-| `--idle` | 闲置踢出时间 | `2m` |
-| `--history` | 每个房间保存的历史条数 | `50` |
-| `--max-bytes` | 单条消息最大字节数 | `4096` |
-
-## 💬 聊天命令速查
-
-```
-/help                 查看命令帮助
-/who [all]            查看房间内或全局在线用户
-/rooms                列出所有房间
-/join <room>          加入或创建房间
-/leave                回到 lobby
-/nick <name>          修改昵称（3~24 个字符，字母/数字/_/-）
-/msg <user> <text>    发送私聊
-/topic [text]         查看或设置房间话题
-/history [n]          查看最近 n 条历史
-/me <action>          发送动作（* user does ...）
-/whoami               查看当前身份与房间
-/ping                 检查延迟
-/quit                 退出聊天室
+```bash
+go run .
 ```
 
-## 🛠 架构概览
+Default address: `http://localhost:8080`
 
-- `main.go`：解析命令行参数并启动服务器。
-- `internal/chat`：核心逻辑，包含 `Server`（房间/用户管理）、`Client`（连接生命周期）、`Room`（成员与历史）等模块。
-- 基于 `bufio.Scanner` 处理文本协议，使用 `sync.RWMutex`、channel 和 goroutine 保证并发安全。
-- **源码注释**：所有核心 Go 文件都配有详细中文注释，方便阅读与继续扩展。
+### 4) Start frontend
 
-## ✅ 开发与测试
+```bash
+cd web
+npm install
+npm run dev
+```
 
-本项目暂无单元测试，但可通过 `go test ./...` 验证编译，并借助多个 `nc` 客户端做手动集成测试。欢迎继续完善自动化测试、Web UI 或更丰富的指令集。
+Open: `http://localhost:5173`
 
----
+## WebSocket Protocol
 
-尽管只是练手项目，也可以是一个体验完整聊天室功能的好基础。Have fun hacking! 🎧
+Client -> Server:
 
+- `{"type":"join_room","roomId":"..."}`
+- `{"type":"leave_room","roomId":"..."}`
+- `{"type":"message","roomId":"...","body":"...","attachmentUrl":"..."}` for rooms
+- `{"type":"message","recipientId":"...","body":"...","attachmentUrl":"..."}` for DMs
+- `{"type":"typing","roomId":"...","isTyping":true}`
+- `{"type":"typing","recipientId":"...","isTyping":true}`
+- `{"type":"read","roomId":"..."}`
+
+Server -> Client:
+
+- `presence`: online/offline status
+- `typing`: typing indicator
+- `message`: new message payload
+- `room_joined`: confirmation of join
+
+## API Snapshot
+
+- `POST /api/auth/register` Register
+- `POST /api/auth/login` Login
+- `GET /api/auth/me` Current user
+- `GET /api/rooms` List rooms
+- `POST /api/rooms` Create room
+- `POST /api/rooms/:id/join` Join room
+- `GET /api/rooms/:id/messages` Room history
+- `GET /api/dms/:userId/messages` DM history
+- `POST /api/uploads` Upload file
+- `GET /ws?token=` WebSocket connect
+
+## Configuration
+
+Environment variables:
+
+- `HTTP_ADDR`: server address, default `:8080`
+- `DATABASE_URL`: Postgres DSN
+- `REDIS_URL`: Redis DSN (optional)
+- `JWT_SECRET`: JWT secret
+- `TOKEN_TTL`: token lifetime, default `24h`
+- `CORS_ORIGINS`: frontend origin, default `http://localhost:5173`
+- `UPLOAD_DIR`: upload directory, default `./uploads`
+- `MAX_UPLOAD_MB`: upload size limit (MB), default `10`
+
+## Local Development Tips
+
+- Use `docker-compose up -d` to start Postgres/Redis locally.
+- Run migrations with the provided SQL file in `db/migrations/001_init.sql`.
+- For the web app, set `VITE_API_BASE` if your API is not on `http://localhost:8080`.
+
+## Structure
+
+- `main.go`: API + WS entrypoint
+- `internal/http`: REST routes and handlers
+- `internal/ws`: WebSocket hub
+- `internal/store`: database access layer
+- `db/migrations`: schema migrations
+- `web/`: frontend app
+
+## Deployment Notes
+
+- Put the API behind an HTTPS reverse proxy (nginx/Caddy) for production.
+- Configure `CORS_ORIGINS` to match your frontend host.
+- Store uploads in a persistent volume or object storage for durability.
+
+## Next Ideas
+
+- Read receipts, mentions, search, archives
+- Redis Pub/Sub for multi-instance WS
+- File type validation, image previews, CDN

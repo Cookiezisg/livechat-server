@@ -1,0 +1,360 @@
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap');
+
+:root {
+  --bg: #f6f1ea;
+  --bg-accent: #d6dde3;
+  --ink: #101214;
+  --muted: #5b6168;
+  --card: rgba(255, 255, 255, 0.85);
+  --accent: #0c5b53;
+  --accent-2: #f4b840;
+  --stroke: rgba(16, 18, 20, 0.1);
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Space Grotesk', system-ui, sans-serif;
+  color: var(--ink);
+  background: radial-gradient(circle at top left, #fbeed7 0%, transparent 45%),
+    radial-gradient(circle at 70% 20%, #d8f0e2 0%, transparent 50%),
+    linear-gradient(140deg, var(--bg) 0%, var(--bg-accent) 100%);
+  min-height: 100vh;
+}
+
+button,
+input {
+  font-family: inherit;
+}
+
+a {
+  color: var(--accent);
+}
+
+.auth-shell {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  min-height: 100vh;
+  padding: 4vw 6vw;
+  gap: 40px;
+}
+
+.auth-card {
+  background: var(--card);
+  border-radius: 28px;
+  padding: 48px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--stroke);
+}
+
+.auth-header h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2.4rem, 3vw, 3.4rem);
+  margin: 18px 0 8px;
+}
+
+.auth-header p {
+  color: var(--muted);
+  margin: 0 0 28px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  background: var(--accent);
+  color: #fff;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.auth-form {
+  display: grid;
+  gap: 16px;
+}
+
+.auth-form label {
+  display: grid;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.auth-form input {
+  border: 1px solid var(--stroke);
+  background: #fff;
+  padding: 12px 16px;
+  border-radius: 14px;
+}
+
+.auth-form button {
+  margin-top: 12px;
+  background: var(--accent);
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 14px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.form-error {
+  color: #a32020;
+  background: rgba(163, 32, 32, 0.08);
+  padding: 10px 14px;
+  border-radius: 12px;
+}
+
+.auth-footer {
+  margin-top: 20px;
+}
+
+.auth-footer .link {
+  background: transparent;
+  border: none;
+  color: var(--accent);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.auth-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 32px;
+}
+
+.panel-copy h2 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(2rem, 2.8vw, 3rem);
+}
+
+.panel-copy p {
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.stat-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.stat-grid div {
+  background: rgba(255, 255, 255, 0.55);
+  border-radius: 18px;
+  padding: 16px 18px;
+  border: 1px solid var(--stroke);
+}
+
+.stat-grid span {
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+}
+
+.stat-grid strong {
+  display: block;
+  margin-top: 6px;
+  font-size: 1.1rem;
+}
+
+.chat-shell {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  min-height: 100vh;
+}
+
+.sidebar {
+  padding: 32px 24px;
+  border-right: 1px solid var(--stroke);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(8px);
+}
+
+.brand {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.brand h2 {
+  margin: 0;
+  font-family: 'Fraunces', serif;
+}
+
+.brand p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.ghost {
+  border: 1px solid var(--stroke);
+  background: transparent;
+  padding: 8px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.sidebar section {
+  margin-bottom: 24px;
+}
+
+.sidebar h3 {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.list {
+  display: grid;
+  gap: 8px;
+}
+
+.list button {
+  background: transparent;
+  border: 1px solid transparent;
+  padding: 10px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.list button.active {
+  background: rgba(12, 91, 83, 0.12);
+  border-color: rgba(12, 91, 83, 0.25);
+}
+
+.search {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid var(--stroke);
+  padding: 10px 12px;
+  margin: 10px 0 12px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #b8b8b8;
+}
+
+.dot.online {
+  background: #2bb672;
+}
+
+.chat-main {
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  padding: 28px 40px;
+  gap: 12px;
+}
+
+.chat-header h1 {
+  margin: 0;
+  font-size: 2rem;
+}
+
+.chat-header p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.chat-thread {
+  overflow-y: auto;
+  padding-right: 12px;
+  display: grid;
+  gap: 16px;
+}
+
+.empty {
+  padding: 24px;
+  border: 1px dashed var(--stroke);
+  border-radius: 16px;
+  color: var(--muted);
+}
+
+.message {
+  display: grid;
+  gap: 6px;
+}
+
+.message.self {
+  justify-items: end;
+}
+
+.message .meta {
+  font-size: 0.75rem;
+  color: var(--muted);
+  display: flex;
+  gap: 12px;
+}
+
+.message .bubble {
+  background: #fff;
+  border-radius: 16px;
+  padding: 12px 16px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.08);
+}
+
+.message.self .bubble {
+  background: var(--accent);
+  color: #fff;
+}
+
+.composer {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--stroke);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.8);
+}
+
+.composer input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  font-size: 1rem;
+}
+
+.composer button {
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+.typing {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+@media (max-width: 960px) {
+  .auth-shell {
+    grid-template-columns: 1fr;
+  }
+  .auth-panel {
+    order: -1;
+  }
+  .chat-shell {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    border-right: none;
+    border-bottom: 1px solid var(--stroke);
+  }
+}
